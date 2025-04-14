@@ -4,7 +4,7 @@ import { Pedido, EstadoPedido } from './interface/pedido/pedido.interface';
 @Injectable()
 export class PedidosService {
   private pedidos: Pedido[] = [];
-  private idCounter: number = 1;  // Contador para las IDs de los pedidos
+  private idCounter: number = 1;  
 
   obtenerPedidos(): Pedido[] {
     return this.pedidos;
@@ -24,46 +24,34 @@ export class PedidosService {
 
   crearPedido(pedidoData: Pedido): Pedido {
     if (!pedidoData.cliente || pedidoData.cliente.length < 3) {
-      throw new BadRequestException('El nombre del cliente debe tener al menos 3 caracteres.');
-    }
-
+      throw new BadRequestException('El nombre del cliente debe tener al menos 3 caracteres.');}
     if (pedidoData.mesa < 1 || pedidoData.mesa > 20) {
-      throw new BadRequestException('La mesa debe estar entre el 1 y el 20.');
-    }
+      throw new BadRequestException('La mesa debe estar entre el 1 y el 20.');}
 
-    // Asigna ID secuencial automáticamente
+    //id automatico
     pedidoData.id = (this.idCounter++).toString();
-
-    // Calcula el total
+    // total
     pedidoData.total = pedidoData.platos.reduce(
-      (total, plato) => total + (plato.precio * plato.cantidad), 0
-    );
-
-    // Asigna estado inicial
+      (total, plato) => total + (plato.precio * plato.cantidad), 0);
+    // estado
     pedidoData.estado = EstadoPedido.Pendiente;
-
     this.pedidos.push(pedidoData);
     return pedidoData;
   }
 
   cambiarEstadoPedido(id: string, estado: EstadoPedido): Pedido {
     const pedido = this.obtenerPedidoPorId(id);
-
     if (pedido.estado === EstadoPedido.Entregado || pedido.estado === EstadoPedido.Cancelado) {
-      throw new ConflictException(`No se puede cambiar el estado de un pedido que está en estado ${pedido.estado}.`);
-    }
-
+      throw new ConflictException(`No se puede cambiar el estado de un pedido que está en estado ${pedido.estado}.`);}
     pedido.estado = estado;
     return pedido;
   }
 
   cancelarPedido(id: string): Pedido {
     const pedido = this.obtenerPedidoPorId(id);
-
     if (pedido.estado === EstadoPedido.Entregado || pedido.estado === EstadoPedido.Cancelado) {
       throw new ConflictException(`No se puede cancelar un pedido que está en estado ${pedido.estado}.`);
     }
-
     pedido.estado = EstadoPedido.Cancelado;
     return pedido;
   }

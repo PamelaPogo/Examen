@@ -6,11 +6,12 @@ import { Pedido, EstadoPedido } from './interface/pedido/pedido.interface';
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) {}
 
+//obtener todos los pedidos
   @Get()
   obtenerTodosLosPedidos(): Pedido[] {
     return this.pedidosService.obtenerPedidos();
   }
-
+//busqueda por id
   @Get(':id')
   obtenerPedidoPorId(@Param('id') id: string): Pedido {
     try {
@@ -20,6 +21,7 @@ export class PedidosController {
     }
   }
 
+//agregar
   @Post()
   @HttpCode(201)
   crearNuevoPedido(@Body() pedidoData: Pedido): Pedido {
@@ -30,6 +32,7 @@ export class PedidosController {
     }
   }
 
+  //actualizar
   @Patch(':id/estado')
   actualizarEstado(@Param('id') id: string, @Body('estado') estado: EstadoPedido): Pedido {
     if (!Object.values(EstadoPedido).includes(estado)) {
@@ -45,6 +48,7 @@ export class PedidosController {
     }
   }
 
+  //eliminar
   @Delete(':id')
   cancelarPedido(@Param('id') id: string): Pedido {
     try {
